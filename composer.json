@@ -9,6 +9,12 @@
             "email": "pavel@batanov.me"
         }
     ],
+    "repositories": [
+        {
+            "url": "https://github.com/scaytrase/symfony-sms-interface.git",
+            "type": "git"
+        }
+    ],
     "require": {
         "scaytrase/symfony-sms-interface": "dev-master"
     },
