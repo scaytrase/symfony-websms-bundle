@@ -1,0 +1,17 @@
+parameters:
+    websms.base_url: "http://www.websms.ru/http_in6.asp"
+    websms.login:
+    websms.password:
+    websms.default_alias:
+    websms.template: "%%1$s?http_username=%%2$s&http_password=%%3$s&phone_list=%%4$s&message=%%5$s&format=txt"
+    # %1 - base_url
+    # %2 - login
+    # %3 - password
+    # %4 - recipient_list
+    # %5 - message
+
+
+services:
+#    scay_trase_utils_web_sms.example:
+#        class: %scay_trase_utils_web_sms.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

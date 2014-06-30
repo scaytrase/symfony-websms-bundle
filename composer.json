@@ -1,0 +1,20 @@
+{
+    "name": "scaytrase/symfony-websms-bundle",
+    "description": "WebSMS SMS sending service implementation",
+    "minimum-stability": "dev",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "Pavel Batanov",
+            "email": "pavel@batanov.me"
+        }
+    ],
+    "require": {
+        "scaytrase/symfony-sms-interface": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "ScayTrase\\Utils\\WebSMSBundle": "src/"
+        }
+    }
+}
