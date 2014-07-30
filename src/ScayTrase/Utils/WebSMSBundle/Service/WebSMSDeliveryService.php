@@ -9,12 +9,12 @@
 namespace ScayTrase\Utils\WebSMSBundle\Service;
 
 
-use ScayTrase\Utils\SMSDeliveryBundle\Entity\ShortMessage;
-use ScayTrase\Utils\SMSDeliveryBundle\Service\DeliveryFailedException;
-use ScayTrase\Utils\SMSDeliveryBundle\Service\MessageDeliveryInterface;
+use ScayTrase\Utils\SMSDeliveryBundle\Exception\DeliveryFailedException;
+use ScayTrase\Utils\SMSDeliveryBundle\Service\MessageDeliveryService;
+use ScayTrase\Utils\SMSDeliveryBundle\Service\ShortMessageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class WebSMSDelivery implements MessageDeliveryInterface
+class WebSMSDeliveryService extends MessageDeliveryService
 {
     private $base_url;
     private $template;
@@ -24,6 +24,8 @@ class WebSMSDelivery implements MessageDeliveryInterface
 
     function __construct(ContainerInterface $container)
     {
+        parent::__construct($container);
+
         $this->login = $container->getParameter('websms.login');
         $this->password = $container->getParameter('websms.password');
         $this->sender_alias = $container->getParameter('websms.default_alias');
@@ -33,20 +35,13 @@ class WebSMSDelivery implements MessageDeliveryInterface
 
     /**
      * Actually send message thru the messenger
-     * @param ShortMessage $message
+     * @param ShortMessageInterface $message
      * @return bool
      * @throws DeliveryFailedException
      */
-    public function sendMessage(ShortMessage $message)
+    protected function sendMessage(ShortMessageInterface $message)
     {
-        $url = sprintf(
-            $this->template,
-            $this->base_url,
-            $this->login,
-            $this->password,
-            $message->getRecipient(),
-            $message->getBody()
-        );
+        $url = $this->buildApiUrl($message);
 
         $response = file_get_contents($url);
         return $this->processDeliveryResults($response);
@@ -54,6 +49,22 @@ class WebSMSDelivery implements MessageDeliveryInterface
 
     private function processDeliveryResults($response)
     {
-        return strpos($response,'error_num=OK') !== false;
+        return strpos($response, 'error_num=OK') !== false;
+    }
+
+    /**
+     * @param ShortMessageInterface $message
+     * @return string
+     */
+    private  function buildApiUrl(ShortMessageInterface $message)
+    {
+        return sprintf(
+            $this->template,
+            $this->base_url,
+            $this->login,
+            $this->password,
+            $message->getRecipient(),
+            $message->getBody()
+        );
     }
 }
