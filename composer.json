@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "scaytrase/symfony-sms-interface": "dev-master"
+        "scaytrase/symfony-sms-interface": "~0.1.0"
     },
     "autoload": {
         "psr-0": {
