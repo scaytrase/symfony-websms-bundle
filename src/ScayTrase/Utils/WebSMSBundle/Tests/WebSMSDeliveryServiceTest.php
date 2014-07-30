@@ -32,7 +32,24 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testConfigruationMerging()
+    public function testPublicService(){
+        $delivery_extension = new ScayTraseUtilsSMSDeliveryExtension();
+        $websms_extension = new ScayTraseUtilsWebSMSExtension();
+
+        $container = $this->getContainer();
+
+        $delivery_extension->load(array(array('disable_delivery'=>true)), $container);
+        $websms_extension->load(array(),$container);
+
+        $sender = $container->get('sms_delivery.websms_sender');
+
+        /** @var ShortMessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->getMock('ScayTrase\Utils\SMSDeliveryBundle\Service\ShortMessageInterface');
+
+        $this->assertTrue($sender->send($message));
+    }
+
+    public function testConfigurationMerging()
     {
         $delivery_extension = new ScayTraseUtilsSMSDeliveryExtension();
         $websms_extension = new ScayTraseUtilsWebSMSExtension();
@@ -42,12 +59,9 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
         $delivery_extension->load(array(), $container);
         $websms_extension->load(array(),$container);
 
-        $container->setParameter('sms_delivery.service_id','sms_delivery.websms_sender');
-
+        $container->setParameter('sms_delivery.class','ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService');
 
         $sender = $container->get('sms_delivery.sender');
-
-        $wm = new WebSMSDeliveryService($container);
 
         $this->assertInstanceOf('ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService',$sender);
     }

@@ -41,14 +41,7 @@ class WebSMSDeliveryService extends MessageDeliveryService
      */
     protected function sendMessage(ShortMessageInterface $message)
     {
-        $url = sprintf(
-            $this->template,
-            $this->base_url,
-            $this->login,
-            $this->password,
-            $message->getRecipient(),
-            $message->getBody()
-        );
+        $url = $this->buildApiUrl($message);
 
         $response = file_get_contents($url);
         return $this->processDeliveryResults($response);
@@ -56,6 +49,22 @@ class WebSMSDeliveryService extends MessageDeliveryService
 
     private function processDeliveryResults($response)
     {
-        return strpos($response,'error_num=OK') !== false;
+        return strpos($response, 'error_num=OK') !== false;
+    }
+
+    /**
+     * @param ShortMessageInterface $message
+     * @return string
+     */
+    private  function buildApiUrl(ShortMessageInterface $message)
+    {
+        return sprintf(
+            $this->template,
+            $this->base_url,
+            $this->login,
+            $this->password,
+            $message->getRecipient(),
+            $message->getBody()
+        );
     }
 }

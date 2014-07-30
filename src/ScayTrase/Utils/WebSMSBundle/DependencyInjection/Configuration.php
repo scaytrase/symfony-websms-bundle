@@ -28,7 +28,7 @@ class Configuration implements ConfigurationInterface
             ->append((new ScalarNodeDefinition('login'))->defaultValue('')->info('WebSMS login'))
             ->append((new ScalarNodeDefinition('password'))->defaultValue('')->info('WebSMS password'))
             ->append((new ScalarNodeDefinition('default_alias'))->defaultValue('')->info('Sending Alias'))
-            ->append((new ScalarNodeDefinition('template'))->defaultValue('%%1$s?http_username=%%2$s&http_password=%%3$s&phone_list=%%4$s&message=%%5$s&format=txt')->info('Template to form API access url'))
+            ->append((new ScalarNodeDefinition('template'))->defaultValue('%1$s?http_username=%2$s&http_password=%3$s&phone_list=%4$s&message=%5$s&format=txt')->info('Template to form API access url'))
             ->end()
         ;
 
