@@ -9,9 +9,10 @@
 namespace ScayTrase\Utils\WebSMSBundle\Tests;
 
 use ScayTrase\Utils\SMSDeliveryBundle\DependencyInjection\ScayTraseUtilsSMSDeliveryExtension;
+use ScayTrase\Utils\SMSDeliveryBundle\DependencyInjection\SMSDeliveryExtension;
 use ScayTrase\Utils\SMSDeliveryBundle\Service\MessageDeliveryService;
 use ScayTrase\Utils\SMSDeliveryBundle\Service\ShortMessageInterface;
-use ScayTrase\Utils\WebSMSBundle\DependencyInjection\ScayTraseUtilsWebSMSExtension;
+use ScayTrase\Utils\WebSMSBundle\DependencyInjection\WebSMSExtension;
 use ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -33,8 +34,8 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
 
 
     public function testPublicService(){
-        $delivery_extension = new ScayTraseUtilsSMSDeliveryExtension();
-        $websms_extension = new ScayTraseUtilsWebSMSExtension();
+        $delivery_extension = new SMSDeliveryExtension();
+        $websms_extension = new WebSMSExtension();
 
         $container = $this->getContainer();
 
@@ -51,8 +52,8 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigurationMerging()
     {
-        $delivery_extension = new ScayTraseUtilsSMSDeliveryExtension();
-        $websms_extension = new ScayTraseUtilsWebSMSExtension();
+        $delivery_extension = new SMSDeliveryExtension();
+        $websms_extension = new WebSMSExtension();
 
         $container = $this->getContainer();
 

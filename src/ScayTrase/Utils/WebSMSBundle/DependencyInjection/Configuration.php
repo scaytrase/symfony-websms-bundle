@@ -20,7 +20,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('scay_trase_utils_web_sms');
+        $rootNode = $treeBuilder->root('web_sms');
 
         $rootNode
             ->children()
