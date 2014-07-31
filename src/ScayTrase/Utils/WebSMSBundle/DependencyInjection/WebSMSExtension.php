@@ -14,12 +14,7 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class WebSMSExtension extends Extension
 {
-    public function getAlias()
-    {
-        return 'websms_delivery';
-    }
-
-    /**
+     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
