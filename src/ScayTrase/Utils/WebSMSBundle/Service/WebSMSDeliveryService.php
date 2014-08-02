@@ -9,6 +9,7 @@
 namespace ScayTrase\Utils\WebSMSBundle\Service;
 
 
+use Exception;
 use ScayTrase\Utils\SMSDeliveryBundle\Exception\DeliveryFailedException;
 use ScayTrase\Utils\SMSDeliveryBundle\Service\MessageDeliveryService;
 use ScayTrase\Utils\SMSDeliveryBundle\Service\ShortMessageInterface;
@@ -43,7 +44,13 @@ class WebSMSDeliveryService extends MessageDeliveryService
     {
         $url = $this->buildApiUrl($message);
 
-        $response = file_get_contents($url);
+        try {
+            $response = file_get_contents($url);
+            $this->setLastReason($response);
+        } catch (Exception $e) {
+            $this->setLastReason($e->getMessage());
+            return false;
+        }
         return $this->processDeliveryResults($response);
     }
 
@@ -56,7 +63,7 @@ class WebSMSDeliveryService extends MessageDeliveryService
      * @param ShortMessageInterface $message
      * @return string
      */
-    private  function buildApiUrl(ShortMessageInterface $message)
+    private function buildApiUrl(ShortMessageInterface $message)
     {
         return sprintf(
             $this->template,

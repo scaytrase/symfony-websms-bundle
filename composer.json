@@ -1,6 +1,6 @@
 {
     "name": "scaytrase/symfony-websms-bundle",
-    "description": "WebSMS SMS sending service implementation",
+    "description": "Symfony2 Bundle for sending SMS via websms provider",
     "minimum-stability": "dev",
     "license": "GPLv2",
     "authors": [
@@ -9,14 +9,8 @@
             "email": "pavel@batanov.me"
         }
     ],
-    "repositories": [
-        {
-            "url": "https://github.com/scaytrase/symfony-sms-interface.git",
-            "type": "git"
-        }
-    ],
     "require": {
-        "scaytrase/symfony-sms-interface": "~0.1.0"
+        "scaytrase/symfony-sms-interface": "~0.2.0"
     },
     "autoload": {
         "psr-0": {

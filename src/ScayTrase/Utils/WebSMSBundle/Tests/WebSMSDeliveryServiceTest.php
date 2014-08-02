@@ -8,11 +8,9 @@
 
 namespace ScayTrase\Utils\WebSMSBundle\Tests;
 
-use ScayTrase\Utils\SMSDeliveryBundle\DependencyInjection\ScayTraseUtilsSMSDeliveryExtension;
-use ScayTrase\Utils\SMSDeliveryBundle\Service\MessageDeliveryService;
+use ScayTrase\Utils\SMSDeliveryBundle\DependencyInjection\SMSDeliveryExtension;
 use ScayTrase\Utils\SMSDeliveryBundle\Service\ShortMessageInterface;
-use ScayTrase\Utils\WebSMSBundle\DependencyInjection\ScayTraseUtilsWebSMSExtension;
-use ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService;
+use ScayTrase\Utils\WebSMSBundle\DependencyInjection\WebSMSExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
@@ -32,14 +30,15 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testPublicService(){
-        $delivery_extension = new ScayTraseUtilsSMSDeliveryExtension();
-        $websms_extension = new ScayTraseUtilsWebSMSExtension();
+    public function testPublicService()
+    {
+        $delivery_extension = new SMSDeliveryExtension();
+        $websms_extension = new WebSMSExtension();
 
         $container = $this->getContainer();
 
-        $delivery_extension->load(array(array('disable_delivery'=>true)), $container);
-        $websms_extension->load(array(),$container);
+        $delivery_extension->load(array(array('disable_delivery' => true)), $container);
+        $websms_extension->load(array(), $container);
 
         $sender = $container->get('sms_delivery.websms_sender');
 
@@ -51,19 +50,19 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigurationMerging()
     {
-        $delivery_extension = new ScayTraseUtilsSMSDeliveryExtension();
-        $websms_extension = new ScayTraseUtilsWebSMSExtension();
+        $delivery_extension = new SMSDeliveryExtension();
+        $websms_extension = new WebSMSExtension();
 
         $container = $this->getContainer();
 
         $delivery_extension->load(array(), $container);
-        $websms_extension->load(array(),$container);
+        $websms_extension->load(array(), $container);
 
-        $container->setParameter('sms_delivery.class','ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService');
+        $container->setParameter('sms_delivery.class', 'ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService');
 
         $sender = $container->get('sms_delivery.sender');
 
-        $this->assertInstanceOf('ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService',$sender);
+        $this->assertInstanceOf('ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService', $sender);
     }
 
 
