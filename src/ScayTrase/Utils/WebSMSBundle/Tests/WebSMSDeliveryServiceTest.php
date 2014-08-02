@@ -77,8 +77,8 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
 
         $collector->collect(new Request(), new Response());
 
-        $this->assertCount(2,$collector->getRecords());
-        $this->assertEquals('ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService',$collector->getService());
+        $this->assertCount(2, $collector->getRecords());
+        $this->assertEquals('ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService', $collector->getService());
     }
 
     public function testConfigurationMerging()
@@ -98,10 +98,72 @@ class WebSMSDeliveryServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService', $sender);
     }
 
-    public function testSending()
+    public function testSuccessfulSending()
     {
-        $this->markTestIncomplete('Have to stub file_get_content');
+        $delivery_extension = new SMSDeliveryExtension();
+        $websms_extension = new WebSMSExtension();
+
+        $container = $this->getContainer();
+
+        $delivery_extension->load(array(), $container);
+        $websms_extension->load(
+            array(
+                array(
+                    'base_url' => __DIR__ . '/fixtures/dummyResponse.txt',
+                    'template' => '%1$s',
+                )
+            ),
+            $container
+        );
+
+        $container->setParameter('sms_delivery.class', 'ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService');
+
+        /** @var WebSMSDeliveryService $sender */
+        $sender = $container->get('sms_delivery.sender');
+
+        /** @var ShortMessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->getMock('ScayTrase\Utils\SMSDeliveryBundle\Service\ShortMessageInterface');
+        $collector = new MessageDeliveryDataCollector($sender);
+        $sender->send($message);
+        $collector->collect(new Request(), new Response());
+
+        $this->assertCount(1, $collector->getRecords());
+        $this->assertEquals('success', $collector->getRecords()[0]['status'], $collector->getRecords()[0]['reason']);
     }
+
+    public function testExceptionSending()
+    {
+        $delivery_extension = new SMSDeliveryExtension();
+        $websms_extension = new WebSMSExtension();
+
+        $container = $this->getContainer();
+
+        $delivery_extension->load(array(), $container);
+        $websms_extension->load(
+            array(
+                array(
+                    'base_url' => __DIR__ . '/fixtures/dummyNotFoundResponse.txt',
+                    'template' => '%1$s',
+                )
+            ),
+            $container
+        );
+
+        $container->setParameter('sms_delivery.class', 'ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService');
+
+        /** @var WebSMSDeliveryService $sender */
+        $sender = $container->get('sms_delivery.sender');
+
+        /** @var ShortMessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->getMock('ScayTrase\Utils\SMSDeliveryBundle\Service\ShortMessageInterface');
+        $collector = new MessageDeliveryDataCollector($sender);
+        $sender->send($message);
+        $collector->collect(new Request(), new Response());
+
+        $this->assertCount(1, $collector->getRecords());
+        $this->assertEquals('fail', $collector->getRecords()[0]['status'], $collector->getRecords()[0]['reason']);
+    }
+
 
     private function getContainer()
     {
