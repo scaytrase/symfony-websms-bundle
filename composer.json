@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "scaytrase/symfony-sms-interface": "~1.0",
+    "scaytrase/symfony-sms-delivery-bundle": "~1.0",
     "scaytrase/websms-php": "~1.0"
   },
   "require-dev": {
