@@ -1,0 +1,25 @@
+parameters:
+  websms_bridge.connection.driver: @websms_bridge.driver.json
+  websms_bridge.connection.login: null
+  websms_bridge.connection.secret: null
+  websms_bridge.connection.mode: 0
+
+services:
+  websms_bridge.driver.json:
+    class: ScayTrase\WebSMS\Driver\JsonDriver
+
+  websms_bridge.driver.http:
+    class: ScayTrase\WebSMS\Driver\FormDriver
+
+  websms_bridge.connection:
+    class: ScayTrase\WebSMS\Connection\Connection
+    arguments:
+    - %websms_bridge.connection.driver%
+    - %websms_bridge.connection.login%
+    - %websms_bridge.connection.secret%
+    - %websms_bridge.connection.mode%
+
+  sms_delivery.transport.websms:
+    class: ScayTrase\WebSmsBridge\Transport\WebSmsTransport
+    arguments:
+    - @websms_bridge.connection

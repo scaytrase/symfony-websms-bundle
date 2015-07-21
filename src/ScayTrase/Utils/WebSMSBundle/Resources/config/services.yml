@@ -1,7 +1,0 @@
-parameters:
-    scaytrase_utils_sms_delivery.websms_sender.class: ScayTrase\Utils\WebSMSBundle\Service\WebSMSDeliveryService
-
-services:
-    sms_delivery.websms_sender:
-        class: %scaytrase_utils_sms_delivery.websms_sender.class%
-        arguments: [@service_container]
