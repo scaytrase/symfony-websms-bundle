@@ -1,6 +1,0 @@
-[common]
-error_num=OK
-recipient=test
-balance_before=100
-balance_after=100
-package_size=1
