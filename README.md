@@ -11,7 +11,7 @@ This is the bridge implementing a web transport for [scaytrase/symfony-sms-inter
 ## Features
 
 ### Available
-- [x] Single message sening
+- [x] Single message sending
 - [x] Http(Form) and JSON drivers
 - [x] Balance could be extracted from connection after each send
 
