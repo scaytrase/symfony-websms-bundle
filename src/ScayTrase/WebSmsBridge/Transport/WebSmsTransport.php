@@ -36,7 +36,7 @@ class WebSmsTransport implements TransportInterface
      */
     public function send(ShortMessageInterface $message)
     {
-        $webSmsMessage = new WebSmsMessage($message->getBody(), $message->getRecipient());
+        $webSmsMessage = new WebSmsMessage($message->getRecipient(), $message->getBody());
 
         return $this->connection->send($webSmsMessage);
     }
