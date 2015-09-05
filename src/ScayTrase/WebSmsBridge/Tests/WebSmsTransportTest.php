@@ -13,8 +13,8 @@ use ScayTrase\SmsDeliveryBundle\DependencyInjection\SmsDeliveryExtension;
 use ScayTrase\SmsDeliveryBundle\Service\MessageDeliveryService;
 use ScayTrase\SmsDeliveryBundle\Service\ShortMessageInterface;
 use ScayTrase\WebSMS\Connection\Connection;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use ScayTrase\WebSmsBridge\DependencyInjection\WebSmsBridgeExtension;
-use Symfony\Bundle\SecurityBundle\Tests\Functional\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class WebSmsTransportTest extends WebTestCase
