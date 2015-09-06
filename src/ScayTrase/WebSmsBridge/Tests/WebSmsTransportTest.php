@@ -8,13 +8,12 @@
 
 namespace ScayTrase\WebSmsBridge\Tests;
 
-use ScayTrase\SmsDeliveryBundle\DependencyInjection\Compiler\TransportCompilerPass;
-use ScayTrase\SmsDeliveryBundle\DependencyInjection\SmsDeliveryExtension;
 use ScayTrase\SmsDeliveryBundle\Service\MessageDeliveryService;
 use ScayTrase\SmsDeliveryBundle\Service\ShortMessageInterface;
+use ScayTrase\SmsDeliveryBundle\SmsDeliveryBundle;
 use ScayTrase\WebSMS\Connection\Connection;
+use ScayTrase\WebSmsBridge\WebSmsBridgeBundle;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use ScayTrase\WebSmsBridge\DependencyInjection\WebSmsBridgeExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class WebSmsTransportTest extends WebTestCase
@@ -40,7 +39,28 @@ class WebSmsTransportTest extends WebTestCase
         $connection = $container->get('websms_bridge.connection');
 
         self::assertTrue($connection->verify());
-        self::assertGreaterThan(0,$connection->getBalance());
+        self::assertGreaterThan(0, $connection->getBalance());
+    }
+
+    /**
+     * @param array|null $interfaceConfig
+     * @param array|null $webSmsConfig
+     * @return ContainerBuilder
+     */
+    protected function buildContainer(array $interfaceConfig = null, array $webSmsConfig = null)
+    {
+        $container = new ContainerBuilder();
+
+        $bundle = new WebSmsBridgeBundle();
+        $bundle->build($container);
+        $bundle->getContainerExtension()->load(array((array)$webSmsConfig), $container);
+
+        $bundle = new SmsDeliveryBundle();
+        $bundle->build($container);
+        $bundle->getContainerExtension()->load(array((array)$interfaceConfig), $container);
+
+        $container->compile();
+        return $container;
     }
 
     /** @return ShortMessageInterface */
@@ -53,23 +73,5 @@ class WebSmsTransportTest extends WebTestCase
         $messageMock
             ->expects($this->any())->method('getBody')->willReturn('test message');
         return $messageMock;
-    }
-
-    /**
-     * @param array|null $interfaceConfig
-     * @param array|null $webSmsConfig
-     * @return ContainerBuilder
-     */
-    protected function buildContainer(array $interfaceConfig = null, array $webSmsConfig = null)
-    {
-        $interfaceExtension = new SmsDeliveryExtension();
-        $webSmsExtension = new WebSmsBridgeExtension();
-        $container = new ContainerBuilder();
-        $container->addCompilerPass(new TransportCompilerPass());
-        $interfaceExtension->load(array((array)$interfaceConfig), $container);
-        $webSmsExtension->load(array((array)$webSmsConfig), $container);
-
-        $container->compile();
-        return $container;
     }
 }
