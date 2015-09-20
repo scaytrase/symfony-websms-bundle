@@ -8,24 +8,29 @@
 
 namespace ScayTrase\WebSmsBridge\Transport;
 
+use Psr\Log\LoggerInterface;
 use ScayTrase\SmsDeliveryBundle\Exception\DeliveryFailedException;
 use ScayTrase\SmsDeliveryBundle\Service\ShortMessageInterface;
 use ScayTrase\SmsDeliveryBundle\Transport\TransportInterface;
 use ScayTrase\WebSMS\Connection\ConnectionInterface;
-use ScayTrase\WebSmsBridge\Message\WebSmsMessage;
 
 class WebSmsTransport implements TransportInterface
 {
     /** @var  ConnectionInterface */
     private $connection;
 
+    /** @var  LoggerInterface */
+    private $logger = null;
+
     /**
      * WebSmsTransport constructor.
      * @param ConnectionInterface $connection
+     * @param LoggerInterface|null $logger
      */
-    public function __construct(ConnectionInterface $connection)
+    public function __construct(ConnectionInterface $connection, LoggerInterface $logger = null)
     {
         $this->connection = $connection;
+        $this->logger = $logger;
     }
 
     /**
@@ -36,8 +41,14 @@ class WebSmsTransport implements TransportInterface
      */
     public function send(ShortMessageInterface $message)
     {
-        $webSmsMessage = new WebSmsMessage($message->getBody(), $message->getRecipient());
+        $webSmsMessage = new WebSmsMessage($message->getRecipient(), $message->getBody());
 
-        return $this->connection->send($webSmsMessage);
+        $result = $this->connection->send($webSmsMessage);
+
+        if ($this->logger) {
+            $this->logger->info('WebSMS: Sending sms', ['recipient' => $message->getRecipient(), 'success' => $result]);
+        }
+
+        return $result;
     }
 }

@@ -8,22 +8,36 @@
 
 namespace ScayTrase\WebSmsBridge\Tests;
 
-use ScayTrase\SmsDeliveryBundle\DependencyInjection\Compiler\TransportCompilerPass;
-use ScayTrase\SmsDeliveryBundle\DependencyInjection\SmsDeliveryExtension;
 use ScayTrase\SmsDeliveryBundle\Service\MessageDeliveryService;
 use ScayTrase\SmsDeliveryBundle\Service\ShortMessageInterface;
+use ScayTrase\SmsDeliveryBundle\SmsDeliveryBundle;
 use ScayTrase\WebSMS\Connection\Connection;
-use ScayTrase\WebSmsBridge\DependencyInjection\WebSmsBridgeExtension;
-use Symfony\Bundle\SecurityBundle\Tests\Functional\WebTestCase;
+use ScayTrase\WebSmsBridge\WebSmsBridgeBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class WebSmsTransportTest extends WebTestCase
+class WebSmsTransportTest extends \PHPUnit_Framework_TestCase
 {
     public function testSending()
     {
         $container = $this->buildContainer(
-            array('transport' => 'sms_delivery.transport.websms'),
-            array('connection' => array('login' => 'test', 'secret' => 'test', 'mode' => Connection::TEST_SPECIAL))
+            array(
+                new WebSmsBridgeBundle(),
+                new SmsDeliveryBundle(),
+            ),
+            array(
+                'sms_delivery' => array('transport' => 'sms_delivery.transport.websms'),
+                'web_sms' =>
+                    array(
+                        'connection' =>
+                            array(
+                                'login' => 'test',
+                                'secret' => 'test',
+                                'mode' => Connection::TEST_SPECIAL
+                            )
+                    )
+            )
         );
 
         $this->assertEquals('test', $container->getParameter('websms_bridge.connection.login'));
@@ -40,7 +54,45 @@ class WebSmsTransportTest extends WebTestCase
         $connection = $container->get('websms_bridge.connection');
 
         self::assertTrue($connection->verify());
-        self::assertGreaterThan(0,$connection->getBalance());
+        self::assertGreaterThan(0, $connection->getBalance());
+    }
+
+    /**
+     * @param array $configs
+     *
+     * @param BundleInterface[] $bundles
+     * @return ContainerBuilder
+     */
+    protected function buildContainer(array $bundles = array(), array $configs = array())
+    {
+        $container = new ContainerBuilder();
+
+        foreach ($bundles as $bundle) {
+            $bundle->build($container);
+            $this->loadExtension($bundle, $container, $configs);
+        }
+
+        $container->compile();
+
+        $dumper = new PhpDumper($container);
+        $dumper->dump();
+
+        return $container;
+    }
+
+    /**
+     * @param BundleInterface $bundle
+     * @param ContainerBuilder $container
+     * @param array $configs
+     */
+    protected function loadExtension(BundleInterface $bundle, ContainerBuilder $container, array $configs)
+    {
+        $extension = $bundle->getContainerExtension();
+        if (!$extension)
+            return;
+
+        $config = array_key_exists($extension->getAlias(), $configs) ? $configs[$extension->getAlias()] : array();
+        $extension->load(array($config), $container);
     }
 
     /** @return ShortMessageInterface */
@@ -53,23 +105,5 @@ class WebSmsTransportTest extends WebTestCase
         $messageMock
             ->expects($this->any())->method('getBody')->willReturn('test message');
         return $messageMock;
-    }
-
-    /**
-     * @param array|null $interfaceConfig
-     * @param array|null $webSmsConfig
-     * @return ContainerBuilder
-     */
-    protected function buildContainer(array $interfaceConfig = null, array $webSmsConfig = null)
-    {
-        $interfaceExtension = new SmsDeliveryExtension();
-        $webSmsExtension = new WebSmsBridgeExtension();
-        $container = new ContainerBuilder();
-        $container->addCompilerPass(new TransportCompilerPass());
-        $interfaceExtension->load(array((array)$interfaceConfig), $container);
-        $webSmsExtension->load(array((array)$webSmsConfig), $container);
-
-        $container->compile();
-        return $container;
     }
 }

@@ -39,5 +39,10 @@ class WebSmsBridgeExtension extends Extension
             }
         }
     }
+
+    public function getAlias()
+    {
+        return 'web_sms';
+    }
 }
 
