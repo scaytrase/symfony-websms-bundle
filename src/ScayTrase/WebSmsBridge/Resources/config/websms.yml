@@ -24,3 +24,4 @@ services:
     class: ScayTrase\WebSmsBridge\Transport\WebSmsTransport
     arguments:
     - @websms_bridge.connection
+    - @?logger

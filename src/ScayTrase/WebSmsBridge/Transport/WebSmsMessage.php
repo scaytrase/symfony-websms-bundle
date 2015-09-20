@@ -6,10 +6,15 @@
  * Time: 17:57
  */
 
-namespace ScayTrase\WebSmsBridge\Message;
+namespace ScayTrase\WebSmsBridge\Transport;
 
 use ScayTrase\WebSMS\Message\MessageInterface;
 
+/**
+ * Class WebSmsMessage
+ * @package ScayTrase\WebSmsBridge\Transport
+ * @internal
+ */
 class WebSmsMessage implements MessageInterface
 {
     /**
