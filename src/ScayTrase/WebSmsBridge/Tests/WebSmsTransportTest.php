@@ -13,16 +13,30 @@ use ScayTrase\SmsDeliveryBundle\Service\ShortMessageInterface;
 use ScayTrase\SmsDeliveryBundle\SmsDeliveryBundle;
 use ScayTrase\WebSMS\Connection\Connection;
 use ScayTrase\WebSmsBridge\WebSmsBridgeBundle;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class WebSmsTransportTest extends WebTestCase
+class WebSmsTransportTest extends \PHPUnit_Framework_TestCase
 {
     public function testSending()
     {
         $container = $this->buildContainer(
-            array('transport' => 'sms_delivery.transport.websms'),
-            array('connection' => array('login' => 'test', 'secret' => 'test', 'mode' => Connection::TEST_SPECIAL))
+            array(
+                new WebSmsBridgeBundle(),
+                new SmsDeliveryBundle(),
+            ),
+            array(
+                'sms_delivery' => array('transport' => 'sms_delivery.transport.websms'),
+                'web_sms' =>
+                    array(
+                        'connection' =>
+                            array(
+                                'login' => 'test',
+                                'secret' => 'test',
+                                'mode' => Connection::TEST_SPECIAL
+                            )
+                    )
+            )
         );
 
         $this->assertEquals('test', $container->getParameter('websms_bridge.connection.login'));
@@ -43,24 +57,37 @@ class WebSmsTransportTest extends WebTestCase
     }
 
     /**
-     * @param array|null $interfaceConfig
-     * @param array|null $webSmsConfig
+     * @param array $configs
+     *
+     * @param BundleInterface[] $bundles
      * @return ContainerBuilder
      */
-    protected function buildContainer(array $interfaceConfig = null, array $webSmsConfig = null)
+    protected function buildContainer(array $bundles = array(), array $configs = array())
     {
         $container = new ContainerBuilder();
 
-        $bundle = new WebSmsBridgeBundle();
-        $bundle->build($container);
-        $bundle->getContainerExtension()->load(array((array)$webSmsConfig), $container);
-
-        $bundle = new SmsDeliveryBundle();
-        $bundle->build($container);
-        $bundle->getContainerExtension()->load(array((array)$interfaceConfig), $container);
+        foreach ($bundles as $bundle) {
+            $bundle->build($container);
+            $this->loadExtension($bundle, $container, $configs);
+        }
 
         $container->compile();
         return $container;
+    }
+
+    /**
+     * @param BundleInterface $bundle
+     * @param ContainerBuilder $container
+     * @param array $configs
+     */
+    protected function loadExtension(BundleInterface $bundle, ContainerBuilder $container, array $configs)
+    {
+        $extension = $bundle->getContainerExtension();
+        if (!$extension)
+            return;
+
+        $config = array_key_exists($extension->getAlias(), $configs) ? $configs[$extension->getAlias()] : array();
+        $extension->load(array($config), $container);
     }
 
     /** @return ShortMessageInterface */

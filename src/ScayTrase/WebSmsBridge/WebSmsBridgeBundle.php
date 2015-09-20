@@ -9,6 +9,7 @@
 namespace ScayTrase\WebSmsBridge;
 
 use ScayTrase\WebSmsBridge\DependencyInjection\Compiler\WebSmsCompilerPass;
+use ScayTrase\WebSmsBridge\DependencyInjection\WebSmsBridgeExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -18,6 +19,11 @@ class WebSmsBridgeBundle extends Bundle
     {
         parent::build($container);
         $container->addCompilerPass(new WebSmsCompilerPass());
+    }
+
+    public function getContainerExtension()
+    {
+        return new WebSmsBridgeExtension();
     }
 
 }
