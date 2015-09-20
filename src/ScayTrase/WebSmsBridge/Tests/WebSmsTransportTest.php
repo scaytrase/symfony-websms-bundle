@@ -14,6 +14,7 @@ use ScayTrase\SmsDeliveryBundle\SmsDeliveryBundle;
 use ScayTrase\WebSMS\Connection\Connection;
 use ScayTrase\WebSmsBridge\WebSmsBridgeBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class WebSmsTransportTest extends \PHPUnit_Framework_TestCase
@@ -72,6 +73,10 @@ class WebSmsTransportTest extends \PHPUnit_Framework_TestCase
         }
 
         $container->compile();
+
+        $dumper = new PhpDumper($container);
+        $dumper->dump();
+
         return $container;
     }
 
