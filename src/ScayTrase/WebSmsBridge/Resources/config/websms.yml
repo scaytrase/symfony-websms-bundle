@@ -16,12 +16,12 @@ services:
     synthetic: true
     arguments:
     - null
-    - %websms_bridge.connection.login%
-    - %websms_bridge.connection.secret%
-    - %websms_bridge.connection.mode%
+    - "%websms_bridge.connection.login%"
+    - "%websms_bridge.connection.secret%"
+    - "%websms_bridge.connection.mode%"
 
   sms_delivery.transport.websms:
     class: ScayTrase\WebSmsBridge\Transport\WebSmsTransport
     arguments:
-    - @websms_bridge.connection
-    - @?logger
+    - "@websms_bridge.connection"
+    - "@?logger"

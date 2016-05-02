@@ -40,16 +40,17 @@ class WebSmsTransportTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertEquals('test', $container->getParameter('websms_bridge.connection.login'));
-        $this->assertEquals('test', $container->getParameter('websms_bridge.connection.secret'));
-        $this->assertEquals(Connection::TEST_SPECIAL, $container->getParameter('websms_bridge.connection.mode'));
+        self::assertEquals('test', $container->getParameter('websms_bridge.connection.login'));
+        self::assertEquals('test', $container->getParameter('websms_bridge.connection.secret'));
+        self::assertEquals(Connection::TEST_SPECIAL, $container->getParameter('websms_bridge.connection.mode'));
 
         $message = $this->getMessageMock();
 
         /** @var MessageDeliveryService $sender */
         $sender = $container->get('sms_delivery.sender');
 
-        self::assertTrue($sender->send($message));
+        self::assertTrue($sender->spoolMessage($message));
+        self::assertTrue($sender->flush());
 
         $connection = $container->get('websms_bridge.connection');
 
@@ -101,9 +102,9 @@ class WebSmsTransportTest extends \PHPUnit_Framework_TestCase
         /** @var ShortMessageInterface|\PHPUnit_Framework_MockObject_MockObject $messageMock */
         $messageMock = $this->getMock('ScayTrase\SmsDeliveryBundle\Service\ShortMessageInterface');
         $messageMock
-            ->expects($this->any())->method('getRecipient')->willReturn('+79994567890');
+            ->expects(self::any())->method('getRecipient')->willReturn('+79994567890');
         $messageMock
-            ->expects($this->any())->method('getBody')->willReturn('test message');
+            ->expects(self::any())->method('getBody')->willReturn('test message');
         return $messageMock;
     }
 }
