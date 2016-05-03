@@ -2,7 +2,7 @@
   "name": "scaytrase/symfony-websms-bridge",
   "description": "Bridge for WebSMS sending transport",
   "minimum-stability": "stable",
-  "license": "GPL-2.0+",
+  "license": "MIT",
   "authors": [
     {
       "name": "Pavel Batanov",
@@ -10,12 +10,12 @@
     }
   ],
   "require": {
-    "scaytrase/symfony-sms-delivery-bundle": "~1.0",
+    "scaytrase/symfony-sms-delivery-bundle": "~2.0",
     "scaytrase/websms-php": "~1.0"
   },
   "require-dev": {
-    "symfony/framework-bundle": "~2.3",
-    "phpunit/phpunit": "~4.6@stable"
+    "symfony/framework-bundle": "~2.3 | ~3.0",
+    "phpunit/phpunit": "~4.6 | ~5.1"
   },
   "autoload": {
     "psr-0": {
