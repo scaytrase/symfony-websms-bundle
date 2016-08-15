@@ -1,9 +1,4 @@
-.idea/
-
 composer.lock
-
-*.phar
-
 target/
 vendor/
 bin/
